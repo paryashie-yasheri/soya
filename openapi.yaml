@@ -1,0 +1,809 @@
+openapi: 3.0.3
+info:
+  title: Music Bands and Grammy API
+  version: 1.0.0
+  description: >
+    REST API specification for two web services: a MusicBand collection service
+    and a Grammy service that works with bands through the first service.
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+servers:
+  - url: /
+    description: Server that hosts this static OpenAPI documentation
+security: []
+tags:
+  - name: music bands
+    description: Operations for managing MusicBand objects
+  - name: grammy
+    description: Operations of the second Grammy service
+paths:
+  /music-bands:
+    post:
+      tags:
+        - music bands
+      operationId: createMusicBand
+      summary: Create a music band
+      description: >
+        Creates a new MusicBand object. The id and creationDate fields are
+        generated automatically by the service and must not be supplied by the
+        client.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MusicBandCreate"
+            examples:
+              createMusicBand:
+                summary: Create Progressive Rock band
+                value:
+                  name: Porcupine Tree
+                  coordinates:
+                    x: 10
+                    y: 250
+                  numberOfParticipants: 4
+                  genre: PROGRESSIVE_ROCK
+                  label:
+                    bands: 12
+                    sales: 1500000.5
+      responses:
+        "201":
+          description: Music band created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MusicBand"
+              examples:
+                musicBand:
+                  $ref: "#/components/examples/MusicBandExample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    get:
+      tags:
+        - music bands
+      operationId: listMusicBands
+      summary: Get music bands
+      description: >
+        Returns a paginated list of MusicBand objects. Page numbering starts
+        from 0. Sorting is specified in the form field,asc or field,desc.
+        Filtering parameters can be used in any combination. If a filtering
+        parameter is absent, it does not participate in filtering.
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+        - $ref: "#/components/parameters/SortParam"
+        - $ref: "#/components/parameters/FilterIdParam"
+        - $ref: "#/components/parameters/FilterNameParam"
+        - $ref: "#/components/parameters/FilterCoordinatesXParam"
+        - $ref: "#/components/parameters/FilterCoordinatesYParam"
+        - $ref: "#/components/parameters/FilterCreationDateParam"
+        - $ref: "#/components/parameters/FilterNumberOfParticipantsParam"
+        - $ref: "#/components/parameters/FilterGenreParam"
+        - $ref: "#/components/parameters/FilterLabelBandsParam"
+        - $ref: "#/components/parameters/FilterLabelSalesParam"
+      responses:
+        "200":
+          description: Page of music bands
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MusicBandPage"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /music-bands/{id}:
+    get:
+      tags:
+        - music bands
+      operationId: getMusicBandById
+      summary: Get a music band by id
+      description: Returns a MusicBand object by its unique generated id.
+      parameters:
+        - $ref: "#/components/parameters/BandIdParam"
+      responses:
+        "200":
+          description: Music band found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MusicBand"
+              examples:
+                musicBand:
+                  $ref: "#/components/examples/MusicBandExample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    put:
+      tags:
+        - music bands
+      operationId: updateMusicBand
+      summary: Update a music band
+      description: >
+        Updates an existing MusicBand object by id. The id and creationDate
+        fields are managed by the service and are not accepted in the request
+        body.
+      parameters:
+        - $ref: "#/components/parameters/BandIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MusicBandUpdate"
+            examples:
+              updateMusicBand:
+                summary: Update band data
+                value:
+                  name: Porcupine Tree
+                  coordinates:
+                    x: 25
+                    y: 300
+                  numberOfParticipants: 5
+                  genre: PROGRESSIVE_ROCK
+                  label:
+                    bands: 12
+                    sales: null
+      responses:
+        "200":
+          description: Music band updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MusicBand"
+              examples:
+                musicBand:
+                  $ref: "#/components/examples/MusicBandExample"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    delete:
+      tags:
+        - music bands
+      operationId: deleteMusicBand
+      summary: Delete a music band
+      description: Deletes an existing MusicBand object by id.
+      parameters:
+        - $ref: "#/components/parameters/BandIdParam"
+      responses:
+        "204":
+          description: Music band deleted
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /music-bands/average-number-of-participants:
+    get:
+      tags:
+        - music bands
+      operationId: getAverageNumberOfParticipants
+      summary: Get average number of participants
+      description: Calculates the average value of numberOfParticipants for all music bands.
+      responses:
+        "200":
+          description: Average number of participants
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - average
+                properties:
+                  average:
+                    type: number
+                    format: double
+                    example: 4.25
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /music-bands/count-by-number-of-participants:
+    get:
+      tags:
+        - music bands
+      operationId: countMusicBandsByNumberOfParticipants
+      summary: Count bands by number of participants
+      description: Counts MusicBand objects whose numberOfParticipants equals the specified value.
+      parameters:
+        - name: value
+          in: query
+          required: true
+          description: Required numberOfParticipants value.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+          example: 4
+      responses:
+        "200":
+          description: Count result
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - count
+                properties:
+                  count:
+                    type: integer
+                    format: int64
+                    minimum: 0
+                    example: 7
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /music-bands/search-by-name:
+    get:
+      tags:
+        - music bands
+      operationId: searchMusicBandsByName
+      summary: Search bands by name
+      description: Returns MusicBand objects whose name contains the specified substring.
+      parameters:
+        - name: substring
+          in: query
+          required: true
+          description: Required substring for case-sensitive or implementation-defined name search.
+          schema:
+            type: string
+            minLength: 1
+          example: Tree
+      responses:
+        "200":
+          description: Matching music bands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MusicBand"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+  /grammy/band/{band-id}/singles/add:
+    post:
+      tags:
+        - grammy
+      operationId: addSingleToBand
+      summary: Add a single to a band
+      description: >
+        The Grammy service calls the first MusicBand API, checks that the band
+        exists, and adds a new single to that band. Because the task does not
+        define a single class, the API accepts only the single name.
+      parameters:
+        - $ref: "#/components/parameters/GrammyBandIdParam"
+        - name: single-name
+          in: query
+          required: true
+          description: Name of the single to add.
+          schema:
+            type: string
+            minLength: 1
+          example: Trains
+      responses:
+        "201":
+          description: Single added to the band
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - bandId
+                  - singleName
+                properties:
+                  bandId:
+                    type: integer
+                    format: int64
+                    minimum: 1
+                    example: 1
+                  singleName:
+                    type: string
+                    example: Trains
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+  /grammy/band/{band-id}/nominate/{genre}:
+    post:
+      tags:
+        - grammy
+      operationId: nominateBand
+      summary: Nominate a band
+      description: >
+        The Grammy service checks the band through the first MusicBand API and
+        creates a nomination record in the database of the second service.
+      parameters:
+        - $ref: "#/components/parameters/GrammyBandIdParam"
+        - name: genre
+          in: path
+          required: true
+          description: Genre of the Grammy nomination.
+          schema:
+            $ref: "#/components/schemas/MusicGenre"
+      responses:
+        "201":
+          description: Nomination created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - bandId
+                  - genre
+                  - status
+                properties:
+                  bandId:
+                    type: integer
+                    format: int64
+                    minimum: 1
+                    example: 1
+                  genre:
+                    $ref: "#/components/schemas/MusicGenre"
+                  status:
+                    type: string
+                    example: NOMINATED
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+components:
+  schemas:
+    MusicBand:
+      type: object
+      required:
+        - id
+        - name
+        - coordinates
+        - creationDate
+        - numberOfParticipants
+        - genre
+      properties:
+        id:
+          type: integer
+          format: int64
+          minimum: 1
+          readOnly: true
+          description: Unique generated identifier.
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          example: Porcupine Tree
+        coordinates:
+          $ref: "#/components/schemas/Coordinates"
+        creationDate:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Generated creation date and time.
+          example: "2026-09-20T12:00:00+03:00"
+        numberOfParticipants:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 4
+        genre:
+          $ref: "#/components/schemas/MusicGenre"
+        label:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/Label"
+          nullable: true
+    MusicBandCreate:
+      type: object
+      required:
+        - name
+        - coordinates
+        - numberOfParticipants
+        - genre
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: Porcupine Tree
+        coordinates:
+          $ref: "#/components/schemas/Coordinates"
+        numberOfParticipants:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 4
+        genre:
+          $ref: "#/components/schemas/MusicGenre"
+        label:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/Label"
+          nullable: true
+    MusicBandUpdate:
+      type: object
+      required:
+        - name
+        - coordinates
+        - numberOfParticipants
+        - genre
+      properties:
+        name:
+          type: string
+          minLength: 1
+          example: Porcupine Tree
+        coordinates:
+          $ref: "#/components/schemas/Coordinates"
+        numberOfParticipants:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 5
+        genre:
+          $ref: "#/components/schemas/MusicGenre"
+        label:
+          type: object
+          allOf:
+            - $ref: "#/components/schemas/Label"
+          nullable: true
+    Coordinates:
+      type: object
+      required:
+        - x
+        - y
+      properties:
+        x:
+          type: integer
+          format: int32
+          minimum: -970
+          description: Must be greater than -971.
+          example: 10
+        y:
+          type: integer
+          format: int64
+          example: 250
+    Label:
+      type: object
+      required:
+        - bands
+      properties:
+        bands:
+          type: integer
+          format: int32
+          example: 12
+        sales:
+          type: number
+          format: double
+          minimum: 0
+          exclusiveMinimum: true
+          nullable: true
+          description: May be null. If specified, must be greater than 0.
+          example: 1500000.5
+    MusicGenre:
+      type: string
+      enum:
+        - PROGRESSIVE_ROCK
+        - PSYCHEDELIC_ROCK
+        - MATH_ROCK
+        - PUNK_ROCK
+      example: PROGRESSIVE_ROCK
+    MusicBandPage:
+      type: object
+      required:
+        - content
+        - page
+        - size
+        - totalElements
+        - totalPages
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/MusicBand"
+        page:
+          type: integer
+          minimum: 0
+          example: 0
+        size:
+          type: integer
+          minimum: 1
+          example: 10
+        totalElements:
+          type: integer
+          format: int64
+          minimum: 0
+          example: 1
+        totalPages:
+          type: integer
+          minimum: 0
+          example: 1
+    ErrorResponse:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2026-09-20T12:05:00+03:00"
+        status:
+          type: integer
+          example: 404
+        error:
+          type: string
+          example: Not Found
+        message:
+          type: string
+          example: Music band with id 99 was not found.
+        path:
+          type: string
+          example: /music-bands/99
+  parameters:
+    BandIdParam:
+      name: id
+      in: path
+      required: true
+      description: Unique MusicBand id.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+      example: 1
+    GrammyBandIdParam:
+      name: band-id
+      in: path
+      required: true
+      description: Unique MusicBand id used by the Grammy service.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+      example: 1
+    PageParam:
+      name: page
+      in: query
+      required: false
+      description: Page number starting from 0.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      example: 0
+    SizeParam:
+      name: size
+      in: query
+      required: false
+      description: Positive page size.
+      schema:
+        type: integer
+        minimum: 1
+        default: 10
+      example: 10
+    SortParam:
+      name: sort
+      in: query
+      required: false
+      description: Sorting in the form field,asc or field,desc.
+      schema:
+        type: string
+        pattern: "^[A-Za-z][A-Za-z0-9]*(,)(asc|desc)$"
+      example: name,asc
+    FilterIdParam:
+      name: id
+      in: query
+      required: false
+      description: Filter by id. If absent, this field is not used for filtering.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+      example: 1
+    FilterNameParam:
+      name: name
+      in: query
+      required: false
+      description: Filter by name. If absent, this field is not used for filtering.
+      schema:
+        type: string
+        minLength: 1
+      example: Porcupine Tree
+    FilterCoordinatesXParam:
+      name: coordinatesX
+      in: query
+      required: false
+      description: Filter by coordinates.x. If absent, this field is not used for filtering.
+      schema:
+        type: integer
+        format: int32
+        minimum: -970
+      example: 10
+    FilterCoordinatesYParam:
+      name: coordinatesY
+      in: query
+      required: false
+      description: Filter by coordinates.y. If absent, this field is not used for filtering.
+      schema:
+        type: integer
+        format: int64
+      example: 250
+    FilterCreationDateParam:
+      name: creationDate
+      in: query
+      required: false
+      description: Filter by creationDate. If absent, this field is not used for filtering.
+      schema:
+        type: string
+        format: date-time
+      example: "2026-09-20T12:00:00+03:00"
+    FilterNumberOfParticipantsParam:
+      name: numberOfParticipants
+      in: query
+      required: false
+      description: Filter by numberOfParticipants. If absent, this field is not used for filtering.
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+      example: 4
+    FilterGenreParam:
+      name: genre
+      in: query
+      required: false
+      description: Filter by genre. If absent, this field is not used for filtering.
+      schema:
+        $ref: "#/components/schemas/MusicGenre"
+    FilterLabelBandsParam:
+      name: labelBands
+      in: query
+      required: false
+      description: Filter by label.bands. If absent, this field is not used for filtering.
+      schema:
+        type: integer
+        format: int32
+      example: 12
+    FilterLabelSalesParam:
+      name: labelSales
+      in: query
+      required: false
+      description: Filter by label.sales. If absent, this field is not used for filtering.
+      schema:
+        type: number
+        format: double
+        minimum: 0
+        exclusiveMinimum: true
+      example: 1500000.5
+  responses:
+    BadRequest:
+      description: Wrong request parameter format
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            badRequest:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 400
+                error: Bad Request
+                message: Query parameter page must be an integer greater than or equal to 0.
+                path: /music-bands
+    NotFound:
+      description: Music band not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            notFound:
+              $ref: "#/components/examples/ErrorExample"
+    Conflict:
+      description: Request conflicts with current resource state
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            conflict:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 409
+                error: Conflict
+                message: Music band cannot be changed because of a conflicting operation.
+                path: /music-bands/1
+    UnprocessableEntity:
+      description: Model constraint violation
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            validationError:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 422
+                error: Unprocessable Entity
+                message: numberOfParticipants must be greater than 0.
+                path: /music-bands
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            serverError:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 500
+                error: Internal Server Error
+                message: Unexpected server error.
+                path: /music-bands
+    ServiceUnavailable:
+      description: Grammy service cannot access the MusicBand service
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            serviceUnavailable:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 503
+                error: Service Unavailable
+                message: Grammy service cannot access MusicBand service.
+                path: /grammy/band/1/singles/add
+  examples:
+    MusicBandExample:
+      summary: MusicBand response
+      value:
+        id: 1
+        name: Porcupine Tree
+        coordinates:
+          x: 10
+          y: 250
+        creationDate: "2026-09-20T12:00:00+03:00"
+        numberOfParticipants: 4
+        genre: PROGRESSIVE_ROCK
+        label:
+          bands: 12
+          sales: 1500000.5
+    ErrorExample:
+      summary: Error response
+      value:
+        timestamp: "2026-09-20T12:05:00+03:00"
+        status: 404
+        error: Not Found
+        message: Music band with id 99 was not found.
+        path: /music-bands/99
