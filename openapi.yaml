@@ -38,7 +38,7 @@ paths:
               createMusicBand:
                 summary: Create Progressive Rock band
                 value:
-                  name: Porcupine Tree
+                  name: ivanzolo2004
                   coordinates:
                     x: 10
                     y: 250
@@ -46,7 +46,7 @@ paths:
                   genre: PROGRESSIVE_ROCK
                   label:
                     bands: 12
-                    sales: 1500000.5
+                    sales: 1500000
       responses:
         "201":
           description: Music band created
@@ -59,10 +59,6 @@ paths:
                   $ref: "#/components/examples/MusicBandExample"
         "400":
           $ref: "#/components/responses/BadRequest"
-        "409":
-          $ref: "#/components/responses/Conflict"
-        "422":
-          $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
     get:
@@ -145,7 +141,7 @@ paths:
               updateMusicBand:
                 summary: Update band data
                 value:
-                  name: Porcupine Tree
+                  name: ivanzolo2004
                   coordinates:
                     x: 25
                     y: 300
@@ -168,10 +164,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-        "409":
-          $ref: "#/components/responses/Conflict"
-        "422":
-          $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
     delete:
@@ -281,7 +273,7 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500":
           $ref: "#/components/responses/InternalServerError"
-  /grammy/band/{band-id}/singles/add:
+  /grammy/bands/{band-id}/singles/add:
     post:
       tags:
         - grammy
@@ -324,13 +316,9 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-        "409":
-          $ref: "#/components/responses/Conflict"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        "503":
-          $ref: "#/components/responses/ServiceUnavailable"
-  /grammy/band/{band-id}/nominate/{genre}:
+  /grammy/bands/{band-id}/nominate/{genre}:
     post:
       tags:
         - grammy
@@ -373,12 +361,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
-        "409":
-          $ref: "#/components/responses/Conflict"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        "503":
-          $ref: "#/components/responses/ServiceUnavailable"
 components:
   schemas:
     MusicBand:
@@ -401,7 +385,7 @@ components:
         name:
           type: string
           minLength: 1
-          example: Porcupine Tree
+          example: ivanzolo2004
         coordinates:
           $ref: "#/components/schemas/Coordinates"
         creationDate:
@@ -433,7 +417,7 @@ components:
         name:
           type: string
           minLength: 1
-          example: Porcupine Tree
+          example: ivanzolo2004
         coordinates:
           $ref: "#/components/schemas/Coordinates"
         numberOfParticipants:
@@ -459,7 +443,7 @@ components:
         name:
           type: string
           minLength: 1
-          example: Porcupine Tree
+          example: ivanzolo2004
         coordinates:
           $ref: "#/components/schemas/Coordinates"
         numberOfParticipants:
@@ -638,7 +622,7 @@ components:
       schema:
         type: string
         minLength: 1
-      example: Porcupine Tree
+      example: ivanzolo2004
     FilterCoordinatesXParam:
       name: coordinatesX
       in: query
@@ -703,7 +687,7 @@ components:
         format: double
         minimum: 0
         exclusiveMinimum: true
-      example: 1500000.5
+      example: 1500000
   responses:
     BadRequest:
       description: Wrong request parameter format
@@ -720,42 +704,22 @@ components:
                 message: Query parameter page must be an integer greater than or equal to 0.
                 path: /music-bands
     NotFound:
-      description: Music band not found
+      description: Requested resource or endpoint was not found
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           examples:
-            notFound:
+            resourceNotFound:
               $ref: "#/components/examples/ErrorExample"
-    Conflict:
-      description: Request conflicts with current resource state
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-          examples:
-            conflict:
+            endpointNotFound:
+              summary: Unknown endpoint
               value:
                 timestamp: "2026-09-20T12:05:00+03:00"
-                status: 409
-                error: Conflict
-                message: Music band cannot be changed because of a conflicting operation.
-                path: /music-bands/1
-    UnprocessableEntity:
-      description: Model constraint violation
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-          examples:
-            validationError:
-              value:
-                timestamp: "2026-09-20T12:05:00+03:00"
-                status: 422
-                error: Unprocessable Entity
-                message: numberOfParticipants must be greater than 0.
-                path: /music-bands
+                status: 404
+                error: Not Found
+                message: Endpoint /kafdhjfhk was not found.
+                path: /kafdhjfhk
     InternalServerError:
       description: Internal server error
       content:
@@ -770,26 +734,12 @@ components:
                 error: Internal Server Error
                 message: Unexpected server error.
                 path: /music-bands
-    ServiceUnavailable:
-      description: Grammy service cannot access the MusicBand service
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/ErrorResponse"
-          examples:
-            serviceUnavailable:
-              value:
-                timestamp: "2026-09-20T12:05:00+03:00"
-                status: 503
-                error: Service Unavailable
-                message: Grammy service cannot access MusicBand service.
-                path: /grammy/band/1/singles/add
   examples:
     MusicBandExample:
       summary: MusicBand response
       value:
         id: 1
-        name: Porcupine Tree
+        name: ivanzolo2004
         coordinates:
           x: 10
           y: 250
@@ -798,9 +748,9 @@ components:
         genre: PROGRESSIVE_ROCK
         label:
           bands: 12
-          sales: 1500000.5
+          sales: 1500000
     ErrorExample:
-      summary: Error response
+      summary: Resource not found
       value:
         timestamp: "2026-09-20T12:05:00+03:00"
         status: 404
