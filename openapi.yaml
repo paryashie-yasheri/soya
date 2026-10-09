@@ -49,7 +49,7 @@ paths:
                     sales: 1500000
       responses:
         "201":
-          description: Music band created
+          description: MusicBand object was created successfully. Response body contains the created MusicBand with generated id and creationDate.
           content:
             application/json:
               schema:
@@ -96,11 +96,31 @@ paths:
         - $ref: "#/components/parameters/FilterLabelSalesParam"
       responses:
         "200":
-          description: Page of music bands
+          description: Paginated list of MusicBand objects with page metadata.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/MusicBandPage"
+              examples:
+                firstPage:
+                  summary: First page with one band
+                  value:
+                    content:
+                      - id: 1
+                        name: ivanzolo2004
+                        coordinates:
+                          x: 10
+                          y: 250
+                        creationDate: "2026-09-20T12:00:00+03:00"
+                        numberOfParticipants: 4
+                        genre: PROGRESSIVE_ROCK
+                        label:
+                          bands: 12
+                          sales: 1500000
+                    page: 0
+                    size: 10
+                    totalElements: 1
+                    totalPages: 1
         "400":
           $ref: "#/components/responses/BadRequest"
         "405":
@@ -122,7 +142,7 @@ paths:
         - $ref: "#/components/parameters/BandIdParam"
       responses:
         "200":
-          description: Music band found
+          description: MusicBand object with the requested id.
           content:
             application/json:
               schema:
@@ -174,7 +194,7 @@ paths:
                     sales: null
       responses:
         "200":
-          description: Music band updated
+          description: Updated MusicBand object.
           content:
             application/json:
               schema:
@@ -208,7 +228,7 @@ paths:
         - $ref: "#/components/parameters/BandIdParam"
       responses:
         "204":
-          description: Music band deleted
+          description: MusicBand object was deleted successfully. No response body.
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -230,7 +250,7 @@ paths:
       description: Calculates the average value of numberOfParticipants for all music bands.
       responses:
         "200":
-          description: Average number of participants
+          description: Object containing the average numberOfParticipants value.
           content:
             application/json:
               schema:
@@ -242,6 +262,10 @@ paths:
                     type: number
                     format: double
                     example: 4.25
+              examples:
+                average:
+                  value:
+                    average: 4.25
         "400":
           $ref: "#/components/responses/BadRequest"
         "405":
@@ -271,7 +295,7 @@ paths:
           example: 4
       responses:
         "200":
-          description: Count result
+          description: Object containing the count of matching MusicBand objects.
           content:
             application/json:
               schema:
@@ -284,6 +308,10 @@ paths:
                     format: int64
                     minimum: 0
                     example: 7
+              examples:
+                count:
+                  value:
+                    count: 7
         "400":
           $ref: "#/components/responses/BadRequest"
         "405":
@@ -312,13 +340,27 @@ paths:
           example: Tree
       responses:
         "200":
-          description: Matching music bands
+          description: Array of MusicBand objects whose name contains the requested substring.
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/MusicBand"
+              examples:
+                matches:
+                  value:
+                    - id: 1
+                      name: Porcupine Tree
+                      coordinates:
+                        x: 10
+                        y: 250
+                      creationDate: "2026-09-20T12:00:00+03:00"
+                      numberOfParticipants: 4
+                      genre: PROGRESSIVE_ROCK
+                      label:
+                        bands: 12
+                        sales: 1500000
         "400":
           $ref: "#/components/responses/BadRequest"
         "405":
@@ -351,7 +393,7 @@ paths:
           example: Trains
       responses:
         "201":
-          description: Single added to the band
+          description: Single was added to the band. Response body contains bandId and singleName.
           content:
             application/json:
               schema:
@@ -368,6 +410,11 @@ paths:
                   singleName:
                     type: string
                     example: Trains
+              examples:
+                singleAdded:
+                  value:
+                    bandId: 1
+                    singleName: Trains
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -405,7 +452,7 @@ paths:
             $ref: "#/components/schemas/MusicGenre"
       responses:
         "201":
-          description: Nomination created
+          description: Grammy nomination was created. Response body contains bandId, genre, and nomination status.
           content:
             application/json:
               schema:
@@ -425,6 +472,12 @@ paths:
                   status:
                     type: string
                     example: NOMINATED
+              examples:
+                nomination:
+                  value:
+                    bandId: 1
+                    genre: PROGRESSIVE_ROCK
+                    status: NOMINATED
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -775,7 +828,7 @@ components:
       example: 1500000
   responses:
     BadRequest:
-      description: Wrong request parameter format
+      description: Invalid request syntax, parameter type, query/path value, or JSON body.
       content:
         application/json:
           schema:
@@ -790,7 +843,7 @@ components:
                 message: Query parameter page must be an integer greater than or equal to 0.
                 path: /music-bands
     NotFound:
-      description: Requested resource or endpoint was not found
+      description: Requested MusicBand resource, Grammy band reference, or endpoint was not found.
       content:
         application/json:
           schema:
@@ -808,7 +861,7 @@ components:
                 message: Endpoint /kafdhjfhk was not found.
                 path: /kafdhjfhk
     MethodNotAllowed:
-      description: HTTP method is not supported for this endpoint
+      description: The path exists, but this HTTP method is not supported for it.
       content:
         application/json:
           schema:
@@ -823,7 +876,7 @@ components:
                 message: Method PATCH is not supported for this endpoint.
                 path: /music-bands/1
     NotAcceptable:
-      description: Requested response media type is not supported
+      description: The Accept header does not allow application/json response data.
       content:
         application/json:
           schema:
@@ -838,7 +891,7 @@ components:
                 message: Accept header must allow application/json.
                 path: /music-bands
     UnsupportedMediaType:
-      description: Request body media type is not supported
+      description: Request body Content-Type is not supported. POST and PUT require application/json.
       content:
         application/json:
           schema:
@@ -853,7 +906,7 @@ components:
                 message: Content-Type must be application/json.
                 path: /music-bands
     UnprocessableEntity:
-      description: Request is syntactically valid but violates business rules
+      description: Request is syntactically valid, but violates domain/business rules.
       content:
         application/json:
           schema:
@@ -877,7 +930,7 @@ components:
                 message: Music band is already nominated in this genre.
                 path: /grammy/bands/1/nominate/PROGRESSIVE_ROCK
     InternalServerError:
-      description: Internal server error
+      description: Unexpected server-side application error.
       content:
         application/json:
           schema:
@@ -892,7 +945,7 @@ components:
                 message: Unexpected server error.
                 path: /music-bands
     DatabaseUnavailable:
-      description: Database connection error
+      description: MusicBand service cannot connect to the database or the database query timed out.
       content:
         application/json:
           schema:
