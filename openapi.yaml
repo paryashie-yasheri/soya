@@ -59,8 +59,18 @@ paths:
                   $ref: "#/components/examples/MusicBandExample"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
     get:
       tags:
         - music bands
@@ -93,8 +103,14 @@ paths:
                 $ref: "#/components/schemas/MusicBandPage"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
   /music-bands/{id}:
     get:
       tags:
@@ -118,8 +134,14 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
     put:
       tags:
         - music bands
@@ -164,8 +186,18 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
     delete:
       tags:
         - music bands
@@ -181,8 +213,14 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
   /music-bands/average-number-of-participants:
     get:
       tags:
@@ -206,8 +244,14 @@ paths:
                     example: 4.25
         "400":
           $ref: "#/components/responses/BadRequest"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
   /music-bands/count-by-number-of-participants:
     get:
       tags:
@@ -242,8 +286,14 @@ paths:
                     example: 7
         "400":
           $ref: "#/components/responses/BadRequest"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
   /music-bands/search-by-name:
     get:
       tags:
@@ -271,8 +321,14 @@ paths:
                   $ref: "#/components/schemas/MusicBand"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/DatabaseUnavailable"
   /grammy/bands/{band-id}/singles/add:
     post:
       tags:
@@ -316,8 +372,20 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/MusicBandServiceBadGateway"
+        "503":
+          $ref: "#/components/responses/GrammyServiceUnavailable"
+        "504":
+          $ref: "#/components/responses/MusicBandServiceTimeout"
   /grammy/bands/{band-id}/nominate/{genre}:
     post:
       tags:
@@ -361,8 +429,20 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "404":
           $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/MusicBandServiceBadGateway"
+        "503":
+          $ref: "#/components/responses/GrammyServiceUnavailable"
+        "504":
+          $ref: "#/components/responses/MusicBandServiceTimeout"
 components:
   schemas:
     MusicBand:
@@ -535,6 +615,7 @@ components:
         - timestamp
         - status
         - error
+        - code
         - message
         - path
       properties:
@@ -548,6 +629,10 @@ components:
         error:
           type: string
           example: Not Found
+        code:
+          type: string
+          description: Stable machine-readable error code.
+          example: MUSIC_BAND_NOT_FOUND
         message:
           type: string
           example: Music band with id 99 was not found.
@@ -701,6 +786,7 @@ components:
                 timestamp: "2026-09-20T12:05:00+03:00"
                 status: 400
                 error: Bad Request
+                code: INVALID_REQUEST_PARAMETER
                 message: Query parameter page must be an integer greater than or equal to 0.
                 path: /music-bands
     NotFound:
@@ -718,8 +804,78 @@ components:
                 timestamp: "2026-09-20T12:05:00+03:00"
                 status: 404
                 error: Not Found
+                code: ENDPOINT_NOT_FOUND
                 message: Endpoint /kafdhjfhk was not found.
                 path: /kafdhjfhk
+    MethodNotAllowed:
+      description: HTTP method is not supported for this endpoint
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            methodNotAllowed:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 405
+                error: Method Not Allowed
+                code: METHOD_NOT_ALLOWED
+                message: Method PATCH is not supported for this endpoint.
+                path: /music-bands/1
+    NotAcceptable:
+      description: Requested response media type is not supported
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            notAcceptable:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 406
+                error: Not Acceptable
+                code: NOT_ACCEPTABLE
+                message: Accept header must allow application/json.
+                path: /music-bands
+    UnsupportedMediaType:
+      description: Request body media type is not supported
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            unsupportedMediaType:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 415
+                error: Unsupported Media Type
+                code: UNSUPPORTED_MEDIA_TYPE
+                message: Content-Type must be application/json.
+                path: /music-bands
+    UnprocessableEntity:
+      description: Request is syntactically valid but violates business rules
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            businessRuleViolation:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 422
+                error: Unprocessable Entity
+                code: MUSIC_BAND_ALREADY_EXISTS
+                message: Music band with the same name and coordinates already exists.
+                path: /music-bands
+            invalidNomination:
+              summary: Grammy business rule violation
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 422
+                error: Unprocessable Entity
+                code: BAND_ALREADY_NOMINATED
+                message: Music band is already nominated in this genre.
+                path: /grammy/bands/1/nominate/PROGRESSIVE_ROCK
     InternalServerError:
       description: Internal server error
       content:
@@ -732,8 +888,89 @@ components:
                 timestamp: "2026-09-20T12:05:00+03:00"
                 status: 500
                 error: Internal Server Error
+                code: INTERNAL_SERVER_ERROR
                 message: Unexpected server error.
                 path: /music-bands
+    DatabaseUnavailable:
+      description: Database connection error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            databaseConnectionError:
+              summary: Cannot connect to database
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 503
+                error: Service Unavailable
+                code: DATABASE_CONNECTION_ERROR
+                message: Database connection is unavailable. Try again later.
+                path: /music-bands
+            databaseTimeout:
+              summary: Database query timeout
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 503
+                error: Service Unavailable
+                code: DATABASE_QUERY_TIMEOUT
+                message: Database query timed out.
+                path: /music-bands
+    GrammyServiceUnavailable:
+      description: Grammy service database, infrastructure, or dependency is temporarily unavailable
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            grammyDatabaseConnectionError:
+              summary: Grammy database connection error
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 503
+                error: Service Unavailable
+                code: GRAMMY_DATABASE_CONNECTION_ERROR
+                message: Grammy database connection is unavailable. Try again later.
+                path: /grammy/bands/1/nominate/PROGRESSIVE_ROCK
+            dependencyUnavailable:
+              summary: MusicBand service is unavailable
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 503
+                error: Service Unavailable
+                code: MUSIC_BAND_SERVICE_UNAVAILABLE
+                message: MusicBand service is temporarily unavailable. Try again later.
+                path: /grammy/bands/1/singles/add
+    MusicBandServiceBadGateway:
+      description: Grammy service received an invalid response from MusicBand service
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            badGateway:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 502
+                error: Bad Gateway
+                code: MUSIC_BAND_SERVICE_BAD_GATEWAY
+                message: MusicBand service returned an invalid response.
+                path: /grammy/bands/1/singles/add
+    MusicBandServiceTimeout:
+      description: MusicBand service did not respond in time
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            gatewayTimeout:
+              value:
+                timestamp: "2026-09-20T12:05:00+03:00"
+                status: 504
+                error: Gateway Timeout
+                code: MUSIC_BAND_SERVICE_TIMEOUT
+                message: MusicBand service did not respond in time.
+                path: /grammy/bands/1/singles/add
   examples:
     MusicBandExample:
       summary: MusicBand response
@@ -755,5 +992,6 @@ components:
         timestamp: "2026-09-20T12:05:00+03:00"
         status: 404
         error: Not Found
+        code: MUSIC_BAND_NOT_FOUND
         message: Music band with id 99 was not found.
         path: /music-bands/99
