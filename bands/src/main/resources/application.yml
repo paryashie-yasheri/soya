@@ -1,0 +1,19 @@
+server:
+  port: 8443
+  servlet:
+    context-path: /
+  ssl:
+    key-store: classpath:ssl/bands-keystore.p12
+    key-store-password: changeit
+    key-password: changeit
+    key-store-type: PKCS12
+    key-alias: bands
+
+spring:
+  application:
+    name: music-bands-service
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: true

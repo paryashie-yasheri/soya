@@ -1,0 +1,13 @@
+services:
+  musicBands:
+    base-url: https://localhost:8443
+    connect-timeout-seconds: 5
+    read-timeout-seconds: 10
+
+ssl:
+  trust-store: classpath:ssl/grammy-truststore.p12
+  trust-store-password: changeit
+
+server:
+  # Коннекторы HTTP/HTTPS настраиваются в domain.xml Payara.
+  # Приложение само сервер не открывает.
