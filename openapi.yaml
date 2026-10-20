@@ -43,7 +43,7 @@ paths:
                     x: 10
                     y: 250
                   numberOfParticipants: 4
-                  genre: PROGRESSIVE_ROCK
+                  genre: PSYCHEDELIC_ROCK
                   label:
                     bands: 12
                     sales: 1500000
@@ -113,7 +113,7 @@ paths:
                           y: 250
                         creationDate: "2026-09-20T12:00:00+03:00"
                         numberOfParticipants: 4
-                        genre: PROGRESSIVE_ROCK
+                        genre: PSYCHEDELIC_ROCK
                         label:
                           bands: 12
                           sales: 1500000
@@ -188,7 +188,7 @@ paths:
                     x: 25
                     y: 300
                   numberOfParticipants: 5
-                  genre: PROGRESSIVE_ROCK
+                  genre: PSYCHEDELIC_ROCK
                   label:
                     bands: 12
                     sales: null
@@ -290,7 +290,7 @@ paths:
           description: Required numberOfParticipants value.
           schema:
             type: integer
-            format: int64
+            format: int32
             minimum: 1
           example: 4
       responses:
@@ -357,7 +357,7 @@ paths:
                         y: 250
                       creationDate: "2026-09-20T12:00:00+03:00"
                       numberOfParticipants: 4
-                      genre: PROGRESSIVE_ROCK
+                      genre: PSYCHEDELIC_ROCK
                       label:
                         bands: 12
                         sales: 1500000
@@ -476,7 +476,7 @@ paths:
                 nomination:
                   value:
                     bandId: 1
-                    genre: PROGRESSIVE_ROCK
+                    genre: PSYCHEDELIC_ROCK
                     status: NOMINATED
         "400":
           $ref: "#/components/responses/BadRequest"
@@ -529,7 +529,7 @@ components:
           example: "2026-09-20T12:00:00+03:00"
         numberOfParticipants:
           type: integer
-          format: int64
+          format: int32
           minimum: 1
           example: 4
         genre:
@@ -555,7 +555,7 @@ components:
           $ref: "#/components/schemas/Coordinates"
         numberOfParticipants:
           type: integer
-          format: int64
+          format: int32
           minimum: 1
           example: 4
         genre:
@@ -581,7 +581,7 @@ components:
           $ref: "#/components/schemas/Coordinates"
         numberOfParticipants:
           type: integer
-          format: int64
+          format: int32
           minimum: 1
           example: 5
         genre:
@@ -598,14 +598,15 @@ components:
         - y
       properties:
         x:
-          type: integer
-          format: int32
-          minimum: -970
+          type: number
+          format: float
+          minimum: -971
+          exclusiveMinimum: true
           description: Must be greater than -971.
           example: 10
         y:
-          type: integer
-          format: int64
+          type: number
+          format: float
           example: 250
     Label:
       type: object
@@ -627,11 +628,12 @@ components:
     MusicGenre:
       type: string
       enum:
-        - PROGRESSIVE_ROCK
         - PSYCHEDELIC_ROCK
-        - MATH_ROCK
-        - PUNK_ROCK
-      example: PROGRESSIVE_ROCK
+        - HIP_HOP
+        - SOUL
+        - POST_ROCK
+        - BRIT_POP
+      example: PSYCHEDELIC_ROCK
     MusicBandPage:
       type: object
       required:
@@ -767,9 +769,10 @@ components:
       required: false
       description: Filter by coordinates.x. If absent, this field is not used for filtering.
       schema:
-        type: integer
-        format: int32
-        minimum: -970
+        type: number
+        format: float
+        minimum: -971
+        exclusiveMinimum: true
       example: 10
     FilterCoordinatesYParam:
       name: coordinatesY
@@ -777,8 +780,8 @@ components:
       required: false
       description: Filter by coordinates.y. If absent, this field is not used for filtering.
       schema:
-        type: integer
-        format: int64
+        type: number
+        format: float
       example: 250
     FilterCreationDateParam:
       name: creationDate
@@ -796,7 +799,7 @@ components:
       description: Filter by numberOfParticipants. If absent, this field is not used for filtering.
       schema:
         type: integer
-        format: int64
+        format: int32
         minimum: 1
       example: 4
     FilterGenreParam:
@@ -928,7 +931,7 @@ components:
                 error: Unprocessable Entity
                 code: BAND_ALREADY_NOMINATED
                 message: Music band is already nominated in this genre.
-                path: /grammy/bands/1/nominate/PROGRESSIVE_ROCK
+                path: /grammy/bands/1/nominate/PSYCHEDELIC_ROCK
     InternalServerError:
       description: Unexpected server-side application error.
       content:
@@ -984,7 +987,7 @@ components:
                 error: Service Unavailable
                 code: GRAMMY_DATABASE_CONNECTION_ERROR
                 message: Grammy database connection is unavailable. Try again later.
-                path: /grammy/bands/1/nominate/PROGRESSIVE_ROCK
+                path: /grammy/bands/1/nominate/PSYCHEDELIC_ROCK
             dependencyUnavailable:
               summary: MusicBand service is unavailable
               value:
@@ -1035,7 +1038,7 @@ components:
           y: 250
         creationDate: "2026-09-20T12:00:00+03:00"
         numberOfParticipants: 4
-        genre: PROGRESSIVE_ROCK
+        genre: PSYCHEDELIC_ROCK
         label:
           bands: 12
           sales: 1500000
