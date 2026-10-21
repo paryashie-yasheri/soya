@@ -117,10 +117,11 @@ paths:
                         label:
                           bands: 12
                           sales: 1500000
-                    page: 0
-                    size: 10
-                    totalElements: 1
-                    totalPages: 1
+                    metadata:
+                      page: 0
+                      size: 10
+                      totalElements: 1
+                      totalPages: 1
         "400":
           $ref: "#/components/responses/BadRequest"
         "405":
@@ -638,15 +639,22 @@ components:
       type: object
       required:
         - content
-        - page
-        - size
-        - totalElements
-        - totalPages
+        - metadata
       properties:
         content:
           type: array
           items:
             $ref: "#/components/schemas/MusicBand"
+        metadata:
+          $ref: "#/components/schemas/PageMetadata"
+    PageMetadata:
+      type: object
+      required:
+        - page
+        - size
+        - totalElements
+        - totalPages
+      properties:
         page:
           type: integer
           minimum: 0

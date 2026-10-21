@@ -1,10 +1,10 @@
 package itmo.soa.bands.controller
 
-import itmo.soa.bands.dto.response.MusicBandPageResponse
 import itmo.soa.bands.dto.request.MusicBandRequest
 import itmo.soa.bands.dto.response.AverageNumberOfParticipantsResponse
 import itmo.soa.bands.dto.response.CountResponse
 import itmo.soa.bands.dto.response.MusicBandResponse
+import itmo.soa.bands.dto.response.PageResponse
 import itmo.soa.bands.tools.MusicBandsFilter
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -26,7 +26,7 @@ class MusicBandsController {
         @RequestParam(name = "size", defaultValue = "10") size: Int,
         @RequestParam(name = "sort", required = false) sort: String?,
         @ModelAttribute filter: MusicBandsFilter,
-    ): MusicBandPageResponse {
+    ): PageResponse<MusicBandResponse> {
         return TODO("Provide the return value")
     }
 
