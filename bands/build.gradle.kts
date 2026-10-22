@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.dependency.management)
     id("war")
@@ -7,8 +8,12 @@ plugins {
 
 dependencies {
     implementation(platform("org.springframework.boot:spring-boot-dependencies:3.3.1"))
-    implementation(libs.spring.boot.starter.web)
+    implementation(libs.spring.boot.starter.web) {
+        exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
+    }
     implementation(libs.spring.boot.starter.jetty)
+    implementation(libs.spring.boot.starter.jdbc)
+    runtimeOnly("org.postgresql:postgresql")
 
     compileOnly(libs.jakarta.servlet.api)
 
