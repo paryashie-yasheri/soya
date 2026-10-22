@@ -5,6 +5,7 @@ import itmo.soa.bands.model.Label
 import itmo.soa.bands.model.MusicBand
 import itmo.soa.bands.model.MusicBandPage
 import itmo.soa.bands.model.MusicGenre
+import itmo.soa.bands.exception.InvalidSortException
 import itmo.soa.bands.tools.MusicBandsFilter
 import itmo.soa.bands.tools.PageMetadata
 import org.springframework.jdbc.core.RowMapper
@@ -141,7 +142,7 @@ class JdbcMusicBandsRepository(
             "select avg(number_of_participants) from music_bands",
             emptyMap<String, Any>(),
             Double::class.javaObjectType,
-        ) ?: throw NoSuchElementException("Cannot calculate average for an empty MusicBand collection")
+        ) ?: throw NoSuchElementException("Cannot calculate the average number of participants because the collection is empty.")
 
     override fun countByNumberOfParticipants(value: Int): Long = jdbc.queryForObject(
         "select count(*) from music_bands where number_of_participants = :value",
@@ -194,9 +195,9 @@ class JdbcMusicBandsRepository(
     private fun String?.toOrderBy(): String {
         if (this == null) return "id asc"
         val match = sortPattern.matchEntire(this)
-            ?: throw IllegalArgumentException("sort must have the form field,asc or field,desc")
+            ?: throw InvalidSortException("sort must use the format field,asc or field,desc.")
         val column = sortColumns[match.groupValues[1]]
-            ?: throw IllegalArgumentException("Unsupported sort field: ${match.groupValues[1]}")
+            ?: throw InvalidSortException("Sorting by '${match.groupValues[1]}' is not supported.")
         return "$column ${match.groupValues[2]}, id asc"
     }
 

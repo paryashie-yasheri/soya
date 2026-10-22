@@ -1,6 +1,7 @@
 package itmo.soa.bands.service
 
 import itmo.soa.bands.dto.request.MusicBandRequest
+import itmo.soa.bands.exception.InvalidPaginationException
 import itmo.soa.bands.model.MusicBand
 import itmo.soa.bands.model.MusicBandPage
 import itmo.soa.bands.repository.MusicBandsRepository
@@ -31,6 +32,10 @@ class MusicBandsServiceImpl(
         sort: String?,
         filter: MusicBandsFilter
     ): MusicBandPage {
+
+        if (page < 0) throw InvalidPaginationException("page must be zero or greater.")
+        if (size <= 0) throw InvalidPaginationException("size must be greater than zero.")
+
         return repo.findAll(
             page,
             size,
@@ -45,7 +50,7 @@ class MusicBandsServiceImpl(
         if (found != null) {
             return found
         }
-        throw NoSuchElementException("getMusicBandById: there is no music bands with id: $id")
+        throw NoSuchElementException("MusicBand with id $id was not found.")
     }
 
     override fun updateMusicBandById(
@@ -53,7 +58,7 @@ class MusicBandsServiceImpl(
         musicBand: MusicBandRequest
     ): MusicBand {
         val existingBand = repo.findById(id)
-            ?: throw NoSuchElementException("updateMusicBandById: there is no music bands with id: $id")
+            ?: throw NoSuchElementException("MusicBand with id $id was not found.")
 
         with(mapper) {
             return repo.update(id, musicBand.toModel(id, existingBand.creationDate))
@@ -63,7 +68,7 @@ class MusicBandsServiceImpl(
 
     override fun deleteMusicBandById(id: Long) {
         if (!repo.deleteById(id)){
-            throw NoSuchElementException("deleteMusicBandById: MusicBand with id $id was not found")
+            throw NoSuchElementException("MusicBand with id $id was not found.")
         }
     }
 
