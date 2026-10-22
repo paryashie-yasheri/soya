@@ -6,6 +6,10 @@ plugins {
 dependencies {
     compileOnly(libs.jakarta.ws.rs.api)
     compileOnly(libs.jakarta.servlet.api)
+    compileOnly(libs.jakarta.cdi.api)
+    compileOnly(libs.jakarta.persistence.api)
+    compileOnly("jakarta.transaction:jakarta.transaction-api:2.0.1")
+    compileOnly("org.eclipse.microprofile.config:microprofile-config-api:3.0.3")
 
     implementation(libs.jackson.databind)
     implementation(libs.jackson.annotations)
