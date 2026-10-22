@@ -1,4 +1,4 @@
-package itmo.soa.bands.dto
+package itmo.soa.bands.tools
 
 data class PageMetadata(
     val page: Int,
