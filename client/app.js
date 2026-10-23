@@ -23,11 +23,13 @@ function errorText(payload, status) {
   return `${status}: ${typeof payload === 'string' && payload ? payload : 'Ошибка запроса к сервису'}`;
 }
 async function api(service, path, { method = 'GET', query = {}, body } = {}) {
+  const transportMethod = ['PUT', 'DELETE'].includes(method) ? 'POST' : method;
   const params = new URLSearchParams({ service, path });
+  if (transportMethod !== method) params.set('_method', method);
   Object.entries(query).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') params.set(key, String(value));
   });
-  const options = { method, headers: { Accept: 'application/json' } };
+  const options = { method: transportMethod, headers: { Accept: 'application/json' } };
   if (body !== undefined) {
     options.headers['Content-Type'] = 'application/json';
     options.body = JSON.stringify(body);

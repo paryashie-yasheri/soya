@@ -21,6 +21,10 @@ function respond(int $status, array|string|null $payload): never {
 $service = $_GET['service'] ?? '';
 $path = $_GET['path'] ?? '';
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
+$override = strtoupper($_GET['_method'] ?? '');
+if ($method === 'POST' && in_array($override, ['PUT', 'DELETE'], true)) {
+    $method = $override;
+}
 
 if (!in_array($method, ['GET', 'POST', 'PUT', 'DELETE'], true)) {
     header('Allow: GET, POST, PUT, DELETE');
@@ -43,7 +47,7 @@ if (!$allowedPath) {
 }
 
 $query = $_GET;
-unset($query['service'], $query['path']);
+unset($query['service'], $query['path'], $query['_method']);
 $url = $hosts[$service]['base'] . $path;
 if ($query !== []) {
     $url .= '?' . http_build_query($query, '', '&', PHP_QUERY_RFC3986);
